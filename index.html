@@ -1,0 +1,67 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Gym Tracker V3</title>
+<style>
+:root{--bg:#f4f7fb;--panel:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--good:#16a34a;--danger:#dc2626;--pecs:#ef5350;--dos:#42a5f5;--epaules:#fbc02d;--biceps:#66bb6a;--triceps:#ab47bc}
+[data-theme=dark]{--bg:#0b1220;--panel:#121c2d;--text:#f3f4f6;--muted:#9ca3af;--line:#263348;--accent:#60a5fa}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);padding-bottom:95px}
+.app{max-width:900px;margin:auto;padding:16px}.top{position:sticky;top:0;background:var(--bg);padding-bottom:12px;z-index:3}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{margin:0;font-size:1.45rem}.meta{font-size:.8rem;color:var(--muted)}
+.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--accent);color:#fff;font-weight:800}.start{background:var(--good)}.finish{background:var(--danger)}
+.actions,.stats,.tabs{display:grid;gap:8px;margin-top:12px}.actions{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}.tabs{grid-template-columns:repeat(4,1fr)}
+.stat,.card,.history-item,.status{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.stat{text-align:center}.stat b{display:block}
+.tab{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:10px;font-weight:800}.tab.active{background:var(--accent);color:#fff}
+.status.live{color:var(--good);font-weight:800}.card{margin-top:12px}.head{display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center}.bar{height:45px;border-radius:99px}
+.complete{width:25px;height:25px;accent-color:var(--good)}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.field{background:var(--bg);border-radius:12px;padding:9px}.field label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:5px}
+.charge{display:grid;grid-template-columns:40px 1fr 40px;gap:5px}.small{border:0;border-radius:9px;background:var(--accent);color:#fff;font-weight:900}
+input[type=number]{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);text-align:center}
+.reps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.note{margin-top:9px;font-size:.8rem;color:var(--muted)}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:10px 14px}.timerwrap{max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center}.timer{font-size:1.35rem;font-weight:900}
+.timerbuttons button{border:0;border-radius:9px;padding:9px;background:var(--bg);color:var(--text);font-weight:800}.history{margin-top:20px}.history h2{font-size:1.1rem}
+.pecs{background:var(--pecs)}.dos{background:var(--dos)}.epaules{background:var(--epaules)}.biceps{background:var(--biceps)}.triceps{background:var(--triceps)}
+@media(min-width:720px){#list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{margin-top:0}}
+</style></head><body>
+<div class="app"><div class="top">
+<div class="row"><div><h1>Gym Tracker V3</h1><div class="meta">Cycle A1 → A2 → B1 → B2</div></div><button class="btn" id="theme">🌙</button></div>
+<div class="actions"><button class="btn start" id="start">▶ Démarrer</button><button class="btn finish" id="finish">■ Fin de séance</button></div>
+<div class="status" id="status">Séance non démarrée. Elle commencera aussi à la première répétition.</div>
+<div class="stats"><div class="stat"><b id="done">0/5</b><span class="meta">exercices</span></div><div class="stat"><b id="volume">0</b><span class="meta">volume kg</span></div><div class="stat"><b id="duration">00:00</b><span class="meta">durée</span></div></div>
+<div class="tabs" id="tabs"></div></div>
+<div id="list"></div><section class="history"><h2>Dernières séances</h2><div id="history"></div></section></div>
+<div class="bottom"><div class="timerwrap"><div><div class="meta">Repos</div><div class="timer" id="timer">Prêt</div></div><div class="timerbuttons"><button data-s="60">60 s</button><button data-s="90">90 s</button><button data-s="120">120 s</button></div></div></div>
+<script>
+const P={A1:[["pecs","Développé couché",4,6,10],["dos","Barbell Row",4,8,12],["epaules","Développé assis haltères",3,8,12],["biceps","Curl haltère unilatéral contre banc",3,8,12],["triceps","Extension triceps à la poulie",3,10,15]],A2:[["pecs","Développé incliné haltères",4,8,12],["dos","Tirage vertical",4,8,12],["epaules","Élévations latérales",3,12,20],["biceps","Hammer Curl",3,8,12],["triceps","Skull Crusher",3,8,12]],B1:[["pecs","Poulie haute pectoraux",3,10,15],["dos","Dumbbell Row",4,8,12],["epaules","Développé assis haltères",3,8,12],["biceps","Curl barre EZ",3,8,12],["triceps","Dips classiques",3,6,12]],B2:[["pecs","Développé haltères",4,8,12],["dos","Tirage horizontal",4,8,12],["epaules","Élévations latérales",3,12,20],["biceps","Curl haltère unilatéral",3,8,12],["triceps","Dips banc",3,10,15]]};
+const cycle=["A1","A2","B1","B2"];let S=JSON.parse(localStorage.getItem("gymV3")||"null")||{session:"A1",theme:"dark",active:false,start:null,history:[],values:{}};
+const save=()=>{localStorage.setItem("gymV3",JSON.stringify(S));stats();hist();status()};
+const key=i=>S.session+"-"+i;const val=i=>S.values[key(i)]||(S.values[key(i)]={charge:0,reps:[0,0,0,0],done:false});
+function elapsed(){return S.active?Math.floor((Date.now()-S.start)/1000):0}function fmt(x){return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
+function begin(){if(!S.active){S.active=true;S.start=Date.now();save()}}
+function volume(){let v=0;P[S.session].forEach((e,i)=>{const x=val(i);v+=(+x.charge||0)*x.reps.slice(0,e[2]).reduce((a,b)=>a+(+b||0),0)});return Math.round(v)}
+function end(){
+const has=P[S.session].some((e,i)=>{const x=val(i);return x.done||x.reps.some(r=>r>0)||x.charge>0});if(!has){alert("Aucune donnée à enregistrer.");return}
+if(!S.active)begin();const old=S.session;const snap=P[old].map((e,i)=>({...val(i),name:e[1]}));
+S.history.unshift({date:new Date().toISOString(),session:old,duration:elapsed(),volume:volume(),completed:snap.filter(x=>x.done).length,exercises:snap});S.history=S.history.slice(0,50);
+S.active=false;S.start=null;P[old].forEach((e,i)=>{const x=val(i);x.reps=[0,0,0,0];x.done=false});S.session=cycle[(cycle.indexOf(old)+1)%4];save();render();alert("Séance "+old+" enregistrée. Prochaine séance : "+S.session+".")}
+function render(){
+document.documentElement.dataset.theme=S.theme;document.getElementById("theme").textContent=S.theme==="dark"?"☀️":"🌙";
+tabs.innerHTML="";cycle.forEach(s=>{const b=document.createElement("button");b.className="tab"+(s===S.session?" active":"");b.textContent=s;b.onclick=()=>{S.session=s;save();render()};tabs.appendChild(b)});
+list.innerHTML="";P[S.session].forEach((e,i)=>{const x=val(i),c=document.createElement("div");c.className="card";
+c.innerHTML=`<div class="head"><i class="bar ${e[0]}"></i><div><b>${e[1]}</b><div class="meta">${e[2]} × ${e[3]}-${e[4]}</div></div><input class="complete" type="checkbox" ${x.done?"checked":""}></div><div class="controls"><div class="field"><label>Charge (kg)</label><div class="charge"><button class="small minus">−</button><input class="kg" type="number" step=".5" value="${x.charge||""}"><button class="small plus">+</button></div></div><div class="field"><label>Répétitions</label><div class="reps">${[0,1,2,3].map(n=>`<input class="rep" data-n="${n}" type="number" value="${x.reps[n]||""}" ${n>=e[2]?"disabled":""}>`).join("")}</div></div></div><div class="note"></div>`;
+c.querySelector(".minus").onclick=()=>{x.charge=Math.max(0,(+x.charge||0)-.5);save();render()};c.querySelector(".plus").onclick=()=>{x.charge=(+x.charge||0)+.5;save();render()};
+c.querySelector(".kg").oninput=a=>{x.charge=+a.target.value||0;save()};c.querySelector(".complete").onchange=a=>{begin();x.done=a.target.checked;save()};
+c.querySelectorAll(".rep").forEach(a=>a.oninput=()=>{if(+a.value>0)begin();x.reps[+a.dataset.n]=+a.value||0;save()});
+const used=x.reps.slice(0,e[2]);c.querySelector(".note").textContent=used.every(r=>r>=e[4])&&used.some(r=>r>0)?"Charge validée : augmente légèrement la prochaine fois.":"Progresse jusqu’au haut de la fourchette sur toutes les séries.";
+list.appendChild(c)});stats();hist();status()}
+function stats(){let d=0;P[S.session].forEach((e,i)=>{if(val(i).done)d++});done.textContent=d+"/5";volumeEl.textContent=volume().toLocaleString("fr-FR")}
+function status(){statusEl.className="status"+(S.active?" live":"");statusEl.textContent=S.active?"Séance en cours depuis "+fmt(elapsed())+".":"Séance non démarrée. Elle commencera aussi à la première répétition."}
+function hist(){historyEl.innerHTML=S.history.length?S.history.slice(0,8).map(h=>`<div class="history-item"><b>${h.session}</b> · ${new Date(h.date).toLocaleString("fr-FR")}<div class="meta">${fmt(h.duration)} · ${h.volume.toLocaleString("fr-FR")} kg · ${h.completed}/5 exercices</div></div>`).join(""):'<div class="meta">Aucune séance enregistrée.</div>'}
+const tabs=document.getElementById("tabs"),list=document.getElementById("list"),done=document.getElementById("done"),volumeEl=document.getElementById("volume"),statusEl=document.getElementById("status"),historyEl=document.getElementById("history");
+document.getElementById("start").onclick=begin;document.getElementById("finish").onclick=end;document.getElementById("theme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";save();render()};
+let t=0,id=null;document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{t=+b.dataset.s;clearInterval(id);tick();id=setInterval(()=>{t--;tick();if(t<=0){clearInterval(id);navigator.vibrate?.([200,100,200])}},1000)});function tick(){timer.textContent=t>0?t+" s":"Prêt"}
+setInterval(()=>{duration.textContent=fmt(elapsed());if(S.active)status()},1000);
+if("serviceWorker"in navigator)navigator.serviceWorker.register("service-worker.js");render();
+</script></body></html>

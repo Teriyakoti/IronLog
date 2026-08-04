@@ -1,0 +1,19 @@
+name: Proposition de fonctionnalité
+description: Proposer une amélioration pour IronLog
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Quel problème ou besoin cette fonctionnalité couvre-t-elle ?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution envisagée
+      description: Décris le comportement souhaité.
+    validations:
+      required: true
