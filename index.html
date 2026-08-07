@@ -4,27 +4,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Gym Tracker V3</title>
-<style>
-:root{--bg:#f4f7fb;--panel:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--good:#16a34a;--danger:#dc2626;--pecs:#ef5350;--dos:#42a5f5;--epaules:#fbc02d;--biceps:#66bb6a;--triceps:#ab47bc}
-[data-theme=dark]{--bg:#0b1220;--panel:#121c2d;--text:#f3f4f6;--muted:#9ca3af;--line:#263348;--accent:#60a5fa}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);padding-bottom:95px}
-.app{max-width:900px;margin:auto;padding:16px}.top{position:sticky;top:0;background:var(--bg);padding-bottom:12px;z-index:3}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{margin:0;font-size:1.45rem}.meta{font-size:.8rem;color:var(--muted)}
-.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--accent);color:#fff;font-weight:800}.start{background:var(--good)}.finish{background:var(--danger)}
-.actions,.stats,.tabs{display:grid;gap:8px;margin-top:12px}.actions{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}.tabs{grid-template-columns:repeat(4,1fr)}
-.stat,.card,.history-item,.status{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.stat{text-align:center}.stat b{display:block}
-.tab{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:10px;font-weight:800}.tab.active{background:var(--accent);color:#fff}
-.status.live{color:var(--good);font-weight:800}.card{margin-top:12px}.head{display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center}.bar{height:45px;border-radius:99px}
-.complete{width:25px;height:25px;accent-color:var(--good)}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.field{background:var(--bg);border-radius:12px;padding:9px}.field label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:5px}
-.charge{display:grid;grid-template-columns:40px 1fr 40px;gap:5px}.small{border:0;border-radius:9px;background:var(--accent);color:#fff;font-weight:900}
-input[type=number]{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);text-align:center}
-.reps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.note{margin-top:9px;font-size:.8rem;color:var(--muted)}
-.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:10px 14px}.timerwrap{max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center}.timer{font-size:1.35rem;font-weight:900}
-.timerbuttons button{border:0;border-radius:9px;padding:9px;background:var(--bg);color:var(--text);font-weight:800}.history{margin-top:20px}.history h2{font-size:1.1rem}
-.pecs{background:var(--pecs)}.dos{background:var(--dos)}.epaules{background:var(--epaules)}.biceps{background:var(--biceps)}.triceps{background:var(--triceps)}
-@media(min-width:720px){#list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{margin-top:0}}
-</style></head><body>
+<link rel="stylesheet" href="css/app.css"></head><body>
 <div class="app"><div class="top">
 <div class="row"><div><h1>Gym Tracker V3</h1><div class="meta">Cycle A1 → A2 → B1 → B2</div></div><button class="btn" id="theme">🌙</button></div>
 <div class="actions"><button class="btn start" id="start">▶ Démarrer</button><button class="btn finish" id="finish">■ Fin de séance</button></div>
